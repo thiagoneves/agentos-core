@@ -5,15 +5,14 @@ Modular, runner-agnostic operating system for AI coding agents. Orchestrates wor
 ## Install
 
 ```bash
-git clone git@github.com:thiagoneves/agentos-core.git
-cd agentos-core
-npm install && npm run build
-npm link
+curl -fsSL https://raw.githubusercontent.com/thiagoneves/agentos-core/main/install.sh | bash
 ```
 
-Or with the installer script:
+Or manually:
 
 ```bash
+git clone git@github.com:thiagoneves/agentos-core.git
+cd agentos-core
 ./install.sh
 ```
 

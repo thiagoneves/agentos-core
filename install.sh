@@ -5,7 +5,7 @@ set -euo pipefail
 # AgentOS Installer
 #
 # Local:   ./install.sh
-# Remote:  curl -fsSL https://raw.githubusercontent.com/USER/agent-os/main/install.sh | bash
+# Remote:  curl -fsSL https://raw.githubusercontent.com/thiagoneves/agentos-core/main/install.sh | bash
 # ─────────────────────────────────────────────
 
 REPO_URL="${AGENTOS_REPO:-https://github.com/thiagoneves/agentos-core.git}"
@@ -43,7 +43,7 @@ detect_source() {
   # If running from inside the repo, use the local path
   SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-  if [ -f "$SCRIPT_DIR/package.json" ] && grep -q '"agent-os"' "$SCRIPT_DIR/package.json" 2>/dev/null; then
+  if [ -f "$SCRIPT_DIR/package.json" ] && grep -q '"agentos-core"' "$SCRIPT_DIR/package.json" 2>/dev/null; then
     SOURCE="local"
     SOURCE_DIR="$SCRIPT_DIR"
     info "Source: local (${SOURCE_DIR})"
@@ -177,7 +177,7 @@ next_steps() {
   printf "    ${CYAN}aos doctor${RESET}   Diagnostics and health check\n"
   printf "    ${CYAN}aos --help${RESET}   Show all commands\n"
   printf "\n"
-  printf "  ${DIM}Uninstall: npm unlink -g agent-os${RESET}\n"
+  printf "  ${DIM}Uninstall: npm unlink -g agentos-core${RESET}\n"
   printf "\n"
 }
 
