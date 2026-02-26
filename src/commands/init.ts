@@ -6,7 +6,6 @@ import { ConfigManager } from '../core/config.js';
 import { RunnerManager } from '../core/runner-manager.js';
 import { ModuleManager } from '../core/module-manager.js';
 import { GlobalMemoryManager } from '../core/global-memory.js';
-import { I18n } from '../core/i18n.js';
 import { errorMessage } from '../core/errors.js';
 
 export const initCommand = async () => {
@@ -118,8 +117,6 @@ export const initCommand = async () => {
     },
   ]);
 
-  const i18n = new I18n(answers.output_language);
-
   try {
     // 1. Create config
     await configManager.init({
@@ -146,48 +143,59 @@ export const initCommand = async () => {
         },
       },
     });
-    console.log(chalk.dim('\n  Setting up project...\n'));
+    const g = chalk.green;
+    const tick = g('✓');
 
-    console.log(`  ${chalk.green('\u2713')} config.yaml`);
+    console.log(`\n  ${w('Setting up')}\n`);
 
-    // 2. Create core OS structure
+    console.log(`  ${tick} config.yaml`);
+
     await createCoreOS(baseDir);
-    console.log(`  ${chalk.green('\u2713')} core/ ${chalk.dim('agents, workflows, rules')}`);
+    console.log(`  ${tick} core/`);
 
-    // 3. Create state directories
     await createStateStructure(baseDir);
-    console.log(`  ${chalk.green('\u2713')} state/`);
+    console.log(`  ${tick} state/`);
 
-    // 4. Create artifact skeletons
     if (answers.init_artifacts) {
       await createArtifacts(baseDir, answers.output_language);
-      console.log(`  ${chalk.green('\u2713')} artifacts/ ${chalk.dim('00-context through 05-plan')}`);
+      console.log(`  ${tick} artifacts/`);
     }
 
-    // 5. Install modules
     for (const modName of answers.selected_modules) {
       await moduleManager.install(modName);
       await globalMemory.recordModuleUsage(modName);
+      console.log(`  ${tick} module ${c(modName)}`);
     }
 
-    // 6. Reload config (modules updated it)
     const updatedConfig = await configManager.load();
 
-    // 7. Generate runner integration
     await runnerManager.sync(updatedConfig);
-    console.log(`  ${chalk.green('\u2713')} runner ${chalk.dim(answers.runner)}`);
+    console.log(`  ${tick} runner ${c(answers.runner)}`);
 
-    // 8. Create .gitignore entries
     await updateGitignore(baseDir);
-    console.log(`  ${chalk.green('\u2713')} .gitignore`);
+    console.log(`  ${tick} .gitignore`);
 
-    // 9. Save preferences to global memory
     await globalMemory.updatePreferences({
       default_language: answers.output_language,
       default_runner: answers.runner,
     });
 
-    console.log(`\n  ${chalk.bold.green(i18n.t('init.ready'))}`);
+    // ─── Summary ───
+    const projectName = path.basename(baseDir);
+    const modulesInstalled = answers.selected_modules.length > 0
+      ? answers.selected_modules.join(', ')
+      : 'none';
+
+    console.log('');
+    console.log(`  ${g.bold('⚡ AgentOS initialized!')}`);
+    console.log('');
+    console.log(`  ${w('Project')}    ${projectName}`);
+    console.log(`  ${w('Runner')}     ${answers.runner}`);
+    console.log(`  ${w('Modules')}    ${modulesInstalled}`);
+    console.log(`  ${w('Language')}   ${answers.output_language}`);
+    console.log('');
+    console.log(`  ${d('Run')} ${c('aos --help')} ${d('to see all available commands.')}`);
+    console.log('');
   } catch (err) {
     console.error(chalk.red(`\n  Error: ${errorMessage(err)}`));
     if (process.env.DEBUG && err instanceof Error) console.error(err.stack);
