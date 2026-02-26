@@ -8,7 +8,7 @@ set -euo pipefail
 # Remote:  curl -fsSL https://raw.githubusercontent.com/USER/agent-os/main/install.sh | bash
 # ─────────────────────────────────────────────
 
-REPO_URL="${AGENTOS_REPO:-https://github.com/anthropics/agent-os.git}"
+REPO_URL="${AGENTOS_REPO:-https://github.com/thiagoneves/agentos-core.git}"
 
 # ── Colors ────────────────────────────────────
 

@@ -48,8 +48,10 @@ aos doctor                        # check project health
 | `aos rollback [snapshot]` | Rollback to a snapshot |
 | `aos pause` | Pause the active session and generate a handoff file |
 | `aos report` | Report telemetry from an AI agent session |
-| `aos board [-p port]` | Start the local web dashboard |
+| `aos monitor [-p port]` | Launch the real-time session monitor (web UI) |
 | `aos doctor` | Run diagnostics and health check |
+| `aos create <type> <name>` | Scaffold a new module, agent, task, or workflow |
+| `aos decisions` | View the decision log (architectural and technical decisions) |
 
 ## Architecture
 
@@ -101,42 +103,6 @@ workflows:
   - story-development-cycle.yaml
 depends_on: []
 ```
-
-## Workflows
-
-Workflows define a sequence of phases, each executed by a specific agent:
-
-```yaml
-workflow:
-  id: story-development-cycle
-  name: Story Development Cycle
-
-phases:
-  - id: plan
-    name: Architecture Planning
-    agent: architect
-    task: create-plan
-    gate: user_approval
-    next: implement
-
-  - id: implement
-    name: Implementation
-    agent: developer
-    task: implement-feature
-    retry: 2
-    timeoutMs: 300000
-    next: review
-
-  - id: review
-    name: Code Review
-    agent: reviewer
-    task: review-code
-    decision:
-      approved: done
-      changes_needed: implement
-```
-
-Features: sequential and parallel execution (`dependsOn`), decision routing, retry with backoff, user gates, session pause/resume with handoff files.
 
 ## Context Tracking
 
@@ -191,7 +157,7 @@ settings:
 ## Dashboard
 
 ```bash
-aos board -p 3000
+aos monitor -p 3000
 ```
 
 Real-time web dashboard with WebSocket updates. Shows active sessions, agent metrics, token usage, and cost tracking. Supports pause/resume via the UI.
